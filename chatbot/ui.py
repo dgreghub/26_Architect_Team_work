@@ -14,7 +14,7 @@ def create_interface():
 
     with gr.Blocks(title="Architect Team ChatBot", css=css) as demo:
         gr.Markdown("# 🤖 Architect Team ChatBot")
-        gr.Markdown("GCP 기반 챗봇 애플리케이션입니다.")
+        gr.Markdown("GCP 기반 8팀 챗봇 애플리케이션입니다.")
 
         with gr.Row():
             with gr.Column(scale=1):
