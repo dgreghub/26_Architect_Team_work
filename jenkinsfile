@@ -46,7 +46,7 @@ spec:
       steps {
         container(name: 'kaniko', shell: '/busybox/sh') {
           withCredentials([file(credentialsId: 'ar-credential', variable: 'AR_CREDENTIAL_JSON')]) {
-            sh 'cp $AR_CREDENTIAL_JSON /kaniko/config.json'
+            sh 'cp "$AR_CREDENTIAL_JSON" /kaniko/config.json'
             sh "\
                 /kaniko/executor \
                 --dockerfile=Dockerfile \
