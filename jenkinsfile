@@ -49,6 +49,7 @@ spec:
             sh "cp $AR_CREDENTIAL_JSON /kaniko/config.json"
             sh "\
                 /kaniko/executor \
+                --dockerfile=Dockerfile \
                 --context=dir://./ \
                 --destination=\${REGION}-docker.pkg.dev/\${PROJECT_ID}/docker-repo-\${CLASS_ID}-\${MEMBER_ID}/orchestration-admin-console:$BUILD_ID \
             "
