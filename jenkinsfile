@@ -39,7 +39,7 @@ spec:
     stage('build and push docker image') {
       when {
         anyOf {
-          changeset "26_Architect_Team_work/**"
+          changeset "**/*"
           expression { return currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').size() > 0 }
         }
       }
@@ -59,7 +59,7 @@ spec:
     stage('update gitops repo') {
       when {
         anyOf {
-          changeset "26_Architect_Team_work/**"
+          changeset "**/*"
           expression { return currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').size() > 0 }
         }
       }
