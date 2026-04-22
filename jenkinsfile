@@ -1,0 +1,85 @@
+pipeline {
+  environment {
+    PROJECT_ID = 'architect-certification-289902'
+    REGION = 'us-east1'
+    CLASS_ID = '2601'
+    MEMBER_ID = '33'
+  }
+  options {
+    ansiColor('xterm')
+  }
+  agent {
+    kubernetes {
+      yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    name: kaniko
+spec:
+  containers:
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:latest
+    command:
+    - /busybox/cat
+    tty: true
+  - name: git
+    image: alpine/git
+    command:
+    - cat
+    tty: true
+"""      
+    }
+  }
+  stages {
+    stage('build and push docker image') {
+      when {
+        anyOf {
+          changeset "eshop-backend/**"
+          expression { return currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').size() > 0 }
+        }
+      }
+      steps {
+        container('kaniko') {
+          withCredentials([file(credentialsId: 'ar-credential', variable: 'AR_CREDENTIAL_JSON')]) {
+            sh '''set +x
+              cp \$AR_CREDENTIAL_JSON /kaniko/secret.json
+              /kaniko/executor --dockerfile=Dockerfile --context=. --destination=\${REGION}-docker.pkg.dev/\${PROJECT_ID}/docker-repo-\${CLASS_ID}-\${MEMBER_ID}/orchestration-admin-console:\$BUILD_ID --use-new-run
+            '''
+          }
+        }
+      }
+    }
+    stage('update gitops repo') {
+      when {
+        anyOf {
+          changeset "eshop-backend/**"
+          expression { return currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').size() > 0 }
+        }
+      }
+      steps {
+        container('git') {
+          withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+            sh """
+              git clone https://\${GIT_USER}:\${GIT_TOKEN}@github.com/\${GIT_USER}/handson-cloud-msa-outer.git
+              cd handson-cloud-msa-outer
+              sed -i 's|image:.*|image: \${REGION}-docker.pkg.dev/\${PROJECT_ID}/docker-repo-\${CLASS_ID}-\${MEMBER_ID}/orchestration-admin-console:\${BUILD_ID}|g' environments/dev/k8s/backend.yaml
+              sed -i 's|image:.*|image: \${REGION}-docker.pkg.dev/\${PROJECT_ID}/docker-repo-\${CLASS_ID}-\${MEMBER_ID}/orchestration-admin-console:\${BUILD_ID}|g' environments/prod/k8s/backend.yaml
+              git config user.email "jenkins@ci.local"
+              git config user.name "Jenkins"
+              git add --all
+              git commit -m "ci: update orchestration-admin-console image to build \${BUILD_ID}"
+              n=0
+              until [ \$n -ge 5 ]; do
+                git push https://\${GIT_USER}:\${GIT_TOKEN}@github.com/\${GIT_USER}/handson-cloud-msa-outer.git HEAD:main && break
+                n=\$((n+1))
+                echo "Push failed (\$n/5), retrying after rebase..."
+                git pull --rebase https://\${GIT_USER}:\${GIT_TOKEN}@github.com/\${GIT_USER}/handson-cloud-msa-outer.git main
+              done
+            """
+          }
+        }
+      }
+    }
+  }
+}
