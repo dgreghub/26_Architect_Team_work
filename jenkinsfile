@@ -20,9 +20,13 @@ spec:
   containers:
   - name: kaniko
     image: gcr.io/kaniko-project/executor:debug
+    imagePullPolicy: Always
     command:
     - /busybox/cat
     tty: true
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: "/kaniko/config.json"
   - name: git
     image: alpine/git
     command:
@@ -40,12 +44,14 @@ spec:
         }
       }
       steps {
-        container('kaniko') {
+        container(name: 'kaniko', shell: '/busybox/sh') {
           withCredentials([file(credentialsId: 'ar-credential', variable: 'AR_CREDENTIAL_JSON')]) {
-            sh '''set +x
-              cp \$AR_CREDENTIAL_JSON /kaniko/secret.json
-              /kaniko/executor --dockerfile=Dockerfile --context=. --destination=\${REGION}-docker.pkg.dev/\${PROJECT_ID}/docker-repo-\${CLASS_ID}-\${MEMBER_ID}/orchestration-admin-console:\$BUILD_ID --use-new-run
-            '''
+            sh "cp $AR_CREDENTIAL_JSON /kaniko/config.json"
+            sh "\
+                /kaniko/executor \
+                --context=dir://./ \
+                --destination=\${REGION}-docker.pkg.dev/\${PROJECT_ID}/docker-repo-\${CLASS_ID}-\${MEMBER_ID}/orchestration-admin-console:$BUILD_ID \
+            "
           }
         }
       }
