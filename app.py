@@ -1,8 +1,11 @@
 import os
+from dotenv import load_dotenv
 from chatbot.ui import create_interface
 
 
 if __name__ == "__main__":
+    load_dotenv()
+
     # 환경 변수에서 호스트와 포트 설정
     host = os.getenv("GRADIO_HOST", "0.0.0.0")
     port = int(os.getenv("GRADIO_PORT", 7860))
