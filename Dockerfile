@@ -29,12 +29,14 @@ COPY --from=builder /root/.local /home/appuser/.local
 
 # 환경 변수 설정
 ENV PATH=/home/appuser/.local/bin:$PATH \
+    PYTHONPATH=/app \
     PYTHONUNBUFFERED=1 \
     GRADIO_HOST=0.0.0.0 \
     GRADIO_PORT=7860
 
 # 애플리케이션 코드 복사
 COPY --chown=appuser:appuser app.py .
+COPY --chown=appuser:appuser chatbot ./chatbot
 
 # 사용자 변경
 USER appuser
