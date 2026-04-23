@@ -22,8 +22,7 @@ def create_interface():
                 chatbot = gr.Chatbot(
                     label="Chat History",
                     elem_id="chatbot",
-                    height=400,
-                    type="messages"  # 새로운 메시지 형식 사용
+                    height=400
                 )
 
                 with gr.Row():
