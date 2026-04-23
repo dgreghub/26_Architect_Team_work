@@ -5,12 +5,19 @@ def chat(message, history):
     """
     Gradio 챗봇 응답 함수
     - message: 사용자의 메시지
-    - history: 대화 이력
+    - history: 대화 이력 (list of tuples or dicts)
     """
     if not message:
-        return ""
+        return history
 
-    # 간단한 응답 로직 (실제로는 LLM API 호출 등으로 확장 가능)
-    response = f"[{datetime.now().strftime('%H:%M:%S')}] 사용자님이 보낸 메시지를 받았습니다: '{message}'"
+    # 기본 응답
+    response = "안녕하세요 8팀 봇입니다."
 
-    return response
+    # Gradio Chatbot이 기대하는 형식으로 history 업데이트
+    # 새로운 버전에서는 list of dicts 형식을 사용
+    new_history = history + [
+        {"role": "user", "content": message},
+        {"role": "assistant", "content": response}
+    ]
+
+    return new_history

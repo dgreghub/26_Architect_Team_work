@@ -14,5 +14,11 @@ if __name__ == "__main__":
         server_port=port,
         share=share,
         show_error=True,
-        debug=True
+        debug=True,
+        # Gradio 6.0에서 css를 launch()로 이동
+        css="""
+        #chatbot {
+            height: 600px;
+        }
+        """
     )

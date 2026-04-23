@@ -12,7 +12,7 @@ def create_interface():
     }
     """
 
-    with gr.Blocks(title="Architect Team ChatBot", css=css) as demo:
+    with gr.Blocks(title="Architect Team ChatBot") as demo:
         gr.Markdown("# 🤖 Architect Team ChatBot")
         gr.Markdown("GCP 기반 8팀 챗봇 애플리케이션입니다.")
 
@@ -22,7 +22,8 @@ def create_interface():
                 chatbot = gr.Chatbot(
                     label="Chat History",
                     elem_id="chatbot",
-                    height=400
+                    height=400,
+                    type="messages"  # 새로운 메시지 형식 사용
                 )
 
                 with gr.Row():
@@ -36,8 +37,8 @@ def create_interface():
                 clear_btn = gr.Button("Clear History")
 
         # 이벤트 핸들러
-        msg.submit(chat, inputs=[msg, chatbot], outputs=chatbot, queue=False)
-        submit_btn.click(chat, inputs=[msg, chatbot], outputs=chatbot, queue=False)
+        msg.submit(chat, inputs=[msg, chatbot], outputs=[msg, chatbot], queue=False)
+        submit_btn.click(chat, inputs=[msg, chatbot], outputs=[msg, chatbot], queue=False)
         clear_btn.click(lambda: None, None, chatbot, queue=False)
 
     return demo
