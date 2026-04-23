@@ -38,6 +38,6 @@ def create_interface():
         # 이벤트 핸들러
         msg.submit(chat, inputs=[msg, chatbot], outputs=[msg, chatbot], queue=False)
         submit_btn.click(chat, inputs=[msg, chatbot], outputs=[msg, chatbot], queue=False)
-        clear_btn.click(lambda: None, None, chatbot, queue=False)
+        clear_btn.click(lambda: [], None, chatbot, queue=False)
 
     return demo
