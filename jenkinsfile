@@ -57,35 +57,5 @@ spec:
         }
       }
     }
-    stage('update gitops repo') {
-      when {
-        anyOf {
-          changeset "**/*"
-          expression { return currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').size() > 0 }
-        }
-      }
-      steps {
-        container('git') {
-          withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
-            sh """
-              git clone https://\${GIT_USER}:\${GIT_TOKEN}@github.com/\${GIT_USER}/26_Architect_Team_work.git
-              cd 26_Architect_Team_work
-              sed -i 's|image:.*|image: \${REGION}-docker.pkg.dev/\${PROJECT_ID}/docker-repo-\${CLASS_ID}-\${MEMBER_ID}/orchestration-admin-console:\${BUILD_ID}|g' k8s/deployment.yaml
-              git config user.email "jenkins@ci.local"
-              git config user.name "Jenkins"
-              git add --all
-              git commit -m "ci: update orchestration-admin-console image to build \${BUILD_ID}"
-              n=0
-              until [ \$n -ge 5 ]; do
-                git push https://\${GIT_USER}:\${GIT_TOKEN}@github.com/\${GIT_USER}/26_Architect_Team_work.git HEAD:main && break
-                n=\$((n+1))
-                echo "Push failed (\$n/5), retrying after rebase..."
-                git pull --rebase https://\${GIT_USER}:\${GIT_TOKEN}@github.com/\${GIT_USER}/26_Architect_Team_work.git main
-              done
-            """
-          }
-        }
-      }
-    }
   }
 }

@@ -1,0 +1,19 @@
+# SOPS (Secrets Operations) 설정
+# Git에서 파일 자동 암호화/복호화를 위한 설정
+
+# 암호화 규칙
+creation_rules:
+  - path_regex: secrets.*\.enc\.yaml
+    key_groups:
+    - age:
+        - &age_key AGE-SECRET-KEY-placeholder  # age key로 변경 필요
+    type: yaml
+    version: 3
+
+# 로컬 AGE 키 위치 (CI/CD에서 사용)
+# export SOPS_AGE_KEY_FILE=~/.sops/key.txt
+
+# 사용 예시:
+# sops -e secrets.yaml > secrets.enc.yaml     # 암호화
+# sops -d secrets.enc.yaml                    # 복호화
+# sops secrets.enc.yaml                       # 에디터로 직접 편집

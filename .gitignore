@@ -25,3 +25,15 @@ Thumbs.db
 # Environment variables
 .env
 .env.local
+
+# Secrets & Encryption (NEVER COMMIT)
+.secrets.json.enc
+.secrets.key
+secrets.key
+secrets.json.enc
+.sops/
+~/.sops/
+
+# SOPS AGE keys (로컬 암호화 키)
+*.age
+age-key*

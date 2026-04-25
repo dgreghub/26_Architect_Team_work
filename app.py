@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from chatbot.ui import create_interface
+from chatbot.ui import CUSTOM_CSS, create_interface
 
 
 if __name__ == "__main__":
@@ -19,9 +19,5 @@ if __name__ == "__main__":
         show_error=True,
         debug=True,
         # Gradio 6.0에서 css를 launch()로 이동
-        css="""
-        #chatbot {
-            height: 600px;
-        }
-        """
+        css=CUSTOM_CSS
     )
