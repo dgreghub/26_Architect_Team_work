@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: chatbot
-        image: us-east1-docker.pkg.dev/architect-certification-289902/docker-repo-2601-33/orchestration-admin-console:22
+        image: us-east1-docker.pkg.dev/architect-certification-289902/docker-repo-2601-33/orchestration-admin-console:23
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 7860
