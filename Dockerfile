@@ -37,6 +37,7 @@ ENV PATH=/home/appuser/.local/bin:$PATH \
 # 애플리케이션 코드 복사
 COPY --chown=appuser:appuser app.py .
 COPY --chown=appuser:appuser chatbot ./chatbot
+COPY --chown=appuser:appuser config ./config
 
 # 사용자 변경
 USER appuser
