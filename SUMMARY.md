@@ -13,7 +13,7 @@
 - Docker 이미지 빌드 및 Kubernetes 배포 준비
 - 테스트 코드 포함
 
-## 주요 디렉터리
+## 주요 디렉터리!
 
 ```text
 26_Architect_Team_work/
